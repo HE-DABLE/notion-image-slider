@@ -12,24 +12,22 @@
         }
         
         .slider-container {
-            width: 768px;
+            width: 100%;
+            max-width: 768px;
             position: relative;
             margin: 0 auto;
             overflow: hidden;
             border-radius: 0;
-            /* 그림자 제거 */
         }
         
         .slides {
             display: flex;
             transition: transform 0.5s ease-in-out;
             width: 100%;
-            height: 1024px;
         }
         
         .slide {
             min-width: 100%;
-            height: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -37,9 +35,27 @@
         }
         
         .slide img {
-            max-width: 100%;
-            max-height: 100%;
+            width: 100%;
+            height: auto;
             object-fit: contain;
+        }
+        
+        /* 슬라이드 컨테이너 비율 유지를 위한 패딩 트릭 */
+        .slide-aspect-ratio {
+            width: 100%;
+            padding-bottom: 133.3%; /* 4:3 비율 (768:1024 = 3:4 비율) */
+            position: relative;
+        }
+        
+        .slide-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         
         .dots-container {
@@ -62,22 +78,47 @@
         .active, .dot:hover {
             background-color: #555;
         }
+        
+        /* 작은 화면에서 도트 크기 조정 */
+        @media (max-width: 480px) {
+            .dot {
+                height: 8px;
+                width: 8px;
+                margin: 0 3px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="slider-container">
         <div class="slides">
             <div class="slide">
-                <img src="https://he-dable.github.io/notion-image-slider/images/Benefit-img-widget_250321-a.jpg" alt="슬라이드 1">
+                <div class="slide-aspect-ratio">
+                    <div class="slide-content">
+                        <img src="https://he-dable.github.io/notion-image-slider/images/Benefit-img-widget_250321-a.jpg" alt="슬라이드 1">
+                    </div>
+                </div>
             </div>
             <div class="slide">
-                <img src="https://he-dable.github.io/notion-image-slider/images/Benefit-img-widget_250321-a.jpg" alt="슬라이드 2">
+                <div class="slide-aspect-ratio">
+                    <div class="slide-content">
+                        <img src="https://he-dable.github.io/notion-image-slider/images/Benefit-img-widget_250321-a.jpg" alt="슬라이드 2">
+                    </div>
+                </div>
             </div>
             <div class="slide">
-                <img src="https://he-dable.github.io/notion-image-slider/images/Benefit-img-widget_250321-a.jpg" alt="슬라이드 3">
+                <div class="slide-aspect-ratio">
+                    <div class="slide-content">
+                        <img src="https://he-dable.github.io/notion-image-slider/images/Benefit-img-widget_250321-a.jpg" alt="슬라이드 3">
+                    </div>
+                </div>
             </div>
             <div class="slide">
-                <img src="https://he-dable.github.io/notion-image-slider/images/Benefit-img-widget_250321-a.jpg" alt="슬라이드 4">
+                <div class="slide-aspect-ratio">
+                    <div class="slide-content">
+                        <img src="https://he-dable.github.io/notion-image-slider/images/Benefit-img-widget_250321-a.jpg" alt="슬라이드 4">
+                    </div>
+                </div>
             </div>
         </div>
         
@@ -137,6 +178,32 @@
                 updateActiveDot();
             }, 5000);
         });
+        
+        // 터치 스와이프 지원 (모바일 환경)
+        let touchStartX = 0;
+        let touchEndX = 0;
+        
+        document.querySelector('.slider-container').addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, false);
+        
+        document.querySelector('.slider-container').addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, false);
+        
+        function handleSwipe() {
+            const threshold = 50;  // 최소 스와이프 거리
+            if (touchEndX + threshold < touchStartX) {
+                // 왼쪽으로 스와이프
+                currentIndex = (currentIndex + 1) % slideCount;
+            } else if (touchEndX > touchStartX + threshold) {
+                // 오른쪽으로 스와이프
+                currentIndex = (currentIndex - 1 + slideCount) % slideCount;
+            }
+            updateSlidePosition();
+            updateActiveDot();
+        }
     </script>
 </body>
 </html>
