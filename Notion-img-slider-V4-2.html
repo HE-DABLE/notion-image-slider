@@ -7,113 +7,137 @@
     <style>
         /* 전체 리셋 및 여백 제거 강화 */
         *, *::before, *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+            box-sizing: border-box !important;
+            margin: 0 !important;
+            padding: 0 !important;
         }
         
         html, body {
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden; /* 가로 스크롤 방지 */
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow-x: hidden !important; /* 가로 스크롤 방지 */
+            width: 100% !important;
+            height: auto !important;
         }
         
-        /* 슬라이더 컨테이너 설정 */
+        /* 슬라이더 컨테이너 설정 - 부모 레이아웃에 맞춤 */
         .slider-container {
-            width: 100%;
-            max-width: 768px;
-            position: relative;
-            margin: 0 auto;
-            overflow: hidden;
-            border-radius: 0;
-            display: block; /* display: block 적용 */
-            line-height: 0; /* 잠재적인 인라인 요소 여백 제거 */
+            width: 100% !important;
+            position: relative !important;
+            margin: 0 auto !important;
+            overflow: hidden !important;
+            border-radius: 12px !important;
+            display: block !important;
+            line-height: 0 !important;
         }
         
         .slides {
-            display: flex;
-            transition: transform 0.5s ease-in-out;
-            width: 100%;
-            margin: 0; /* 여백 제거 */
-            padding: 0; /* 여백 제거 */
+            display: flex !important;
+            transition: transform 0.5s ease-in-out !important;
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
         }
         
         .slide {
-            min-width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #f8f8f8;
-            margin: 0; /* 여백 제거 */
-            padding: 0; /* 여백 제거 */
-            line-height: 0; /* 이미지 하단 여백 제거 */
+            min-width: 100% !important;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            background-color: #f8f8f8 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            line-height: 0 !important;
+            border-radius: 12px !important; /* 슬라이드에도 둥근 모서리 적용 */
+            overflow: hidden !important; /* 내부 콘텐츠가 둥근 모서리를 벗어나지 않도록 */
         }
         
         .slide img {
-            width: 100%;
-            height: auto;
-            object-fit: contain;
-            display: block; /* 이미지 하단 여백 제거 */
-            margin: 0; /* 여백 제거 */
+            width: 100% !important;
+            height: auto !important;
+            object-fit: cover !important; /* 이미지가 항상 영역을 채우도록 */
+            display: block !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border-radius: 12px !important; /* 이미지에도 둥근 모서리 적용 */
         }
         
-        /* 슬라이드 컨테이너 비율 유지를 위한 패딩 트릭 */
+        /* 슬라이드 비율 설정 - 반응형에 따라 조정 */
         .slide-aspect-ratio {
-            width: 100%;
-            padding-bottom: 133.3%; /* 4:3 비율 (768:1024 = 3:4 비율) */
-            position: relative;
-            margin: 0; /* 여백 제거 */
+            width: 100% !important;
+            padding-bottom: 56.25% !important; /* 16:9 비율로 시작 */
+            position: relative !important;
+            margin: 0 !important;
+            border-radius: 12px !important; /* 비율 유지 컨테이너에도 둥근 모서리 적용 */
+            overflow: hidden !important; /* 내부 콘텐츠가 둥근 모서리를 벗어나지 않도록 */
         }
         
         .slide-content {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 0; /* 여백 제거 */
-            padding: 0; /* 여백 제거 */
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            margin: 0 !important;
+            padding: 0 !important;
         }
         
         .dots-container {
-            display: flex;
-            justify-content: center;
-            margin-top: 10px;
-            margin-bottom: 0; /* 하단 여백 제거 */
-            line-height: normal; /* 도트 컨테이너의 라인 높이 복구 */
+            display: flex !important;
+            justify-content: center !important;
+            margin-top: 5px !important;
+            margin-bottom: 0 !important;
+            line-height: normal !important;
+            padding: 5px 0 !important;
         }
         
         .dot {
-            cursor: pointer;
-            height: 10px;
-            width: 10px;
-            margin: 0 5px;
-            background-color: #bbb;
-            border-radius: 50%;
-            display: inline-block;
-            transition: background-color 0.3s;
+            cursor: pointer !important;
+            height: 8px !important;
+            width: 8px !important;
+            margin: 0 3px !important;
+            background-color: #bbb !important;
+            border-radius: 50% !important;
+            display: inline-block !important;
+            transition: background-color 0.3s !important;
         }
         
         .active, .dot:hover {
-            background-color: #555;
+            background-color: #555 !important;
         }
         
-        /* 작은 화면에서 도트 크기 조정 */
+        /* 반응형 레이아웃 조정 */
+        @media (max-width: 1200px) {
+            .slide-aspect-ratio {
+                padding-bottom: 66.67% !important; /* 3:2 비율 */
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .slide-aspect-ratio {
+                padding-bottom: 75% !important; /* 4:3 비율 */
+            }
+        }
+        
         @media (max-width: 480px) {
+            .slide-aspect-ratio {
+                padding-bottom: 100% !important; /* 1:1 비율(정사각형) */
+            }
+            
             .dot {
-                height: 8px;
-                width: 8px;
-                margin: 0 3px;
+                height: 6px !important;
+                width: 6px !important;
+                margin: 0 2px !important;
             }
         }
     </style>
 </head>
 <body>
-    <!-- 전체 래퍼 추가 - 여백 제거 강화 -->
-    <div style="margin:0; padding:0; display:block; line-height:0;">
+    <!-- 슬라이더 컨테이너 - 단일 컬럼 -->
+    <div style="margin:0 !important; padding:0 !important; display:block !important; line-height:0 !important;">
         <div class="slider-container">
             <div class="slides">
                 <div class="slide">
@@ -153,8 +177,28 @@
         const slideCount = document.querySelectorAll('.slide').length;
         const dots = document.querySelectorAll('.dot');
         
-        // 초기 활성 도트 설정
-        updateActiveDot();
+        // DOM이 로드된 후 실행
+        document.addEventListener('DOMContentLoaded', function() {
+            // 초기 활성 도트 설정
+            updateActiveDot();
+            
+            // 자동 슬라이드 시작
+            startAutoSlide();
+            
+            // 마우스/터치 이벤트 설정
+            setupEvents();
+            
+            // 페이지 로드 완료 후 추가 보정 (oopy 호환)
+            window.addEventListener('load', function() {
+                applyOopyCompatibility();
+                
+                // 윈도우 크기 변경 시 슬라이더 최적화
+                window.addEventListener('resize', optimizeSliderForParent);
+                
+                // 최초 한 번 최적화 실행
+                optimizeSliderForParent();
+            });
+        });
         
         // 슬라이드 위치 업데이트 함수
         function updateSlidePosition() {
@@ -175,61 +219,109 @@
             updateActiveDot();
         }
         
-        // 자동 슬라이드 기능
-        let interval = setInterval(() => {
-            currentIndex = (currentIndex + 1) % slideCount;
-            updateSlidePosition();
-            updateActiveDot();
-        }, 5000);
-        
-        // 마우스 호버 시 자동 슬라이드 정지
-        document.querySelector('.slider-container').addEventListener('mouseenter', () => {
-            clearInterval(interval);
-        });
-        
-        // 마우스 이탈 시 자동 슬라이드 재개
-        document.querySelector('.slider-container').addEventListener('mouseleave', () => {
-            interval = setInterval(() => {
+        // 자동 슬라이드 시작 함수
+        function startAutoSlide() {
+            // 기존 인터벌 제거
+            if (window.sliderInterval) {
+                clearInterval(window.sliderInterval);
+            }
+            
+            // 새 인터벌 설정
+            window.sliderInterval = setInterval(() => {
                 currentIndex = (currentIndex + 1) % slideCount;
                 updateSlidePosition();
                 updateActiveDot();
-            }, 5000);
-        });
-        
-        // 터치 스와이프 지원 (모바일 환경)
-        let touchStartX = 0;
-        let touchEndX = 0;
-        
-        document.querySelector('.slider-container').addEventListener('touchstart', (e) => {
-            touchStartX = e.changedTouches[0].screenX;
-        }, false);
-        
-        document.querySelector('.slider-container').addEventListener('touchend', (e) => {
-            touchEndX = e.changedTouches[0].screenX;
-            handleSwipe();
-        }, false);
-        
-        function handleSwipe() {
-            const threshold = 50;  // 최소 스와이프 거리
-            if (touchEndX + threshold < touchStartX) {
-                // 왼쪽으로 스와이프
-                currentIndex = (currentIndex + 1) % slideCount;
-            } else if (touchEndX > touchStartX + threshold) {
-                // 오른쪽으로 스와이프
-                currentIndex = (currentIndex - 1 + slideCount) % slideCount;
-            }
-            updateSlidePosition();
-            updateActiveDot();
+            }, 4000); // 4초마다 전환
         }
         
-        // 페이지 로드 완료 후 추가 보정
-        window.addEventListener('load', function() {
+        // 이벤트 설정 함수
+        function setupEvents() {
+            // 마우스 호버 시 자동 슬라이드 정지/재개
+            document.querySelector('.slider-container').addEventListener('mouseenter', () => {
+                if (window.sliderInterval) {
+                    clearInterval(window.sliderInterval);
+                }
+            });
+            
+            document.querySelector('.slider-container').addEventListener('mouseleave', () => {
+                startAutoSlide();
+            });
+            
+            // 터치 스와이프 지원 (모바일 환경)
+            let touchStartX = 0;
+            let touchEndX = 0;
+            
+            document.querySelector('.slider-container').addEventListener('touchstart', (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+            }, false);
+            
+            document.querySelector('.slider-container').addEventListener('touchend', (e) => {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            }, false);
+            
+            function handleSwipe() {
+                const threshold = 50;  // 최소 스와이프 거리
+                if (touchEndX + threshold < touchStartX) {
+                    // 왼쪽으로 스와이프
+                    currentIndex = (currentIndex + 1) % slideCount;
+                } else if (touchEndX > touchStartX + threshold) {
+                    // 오른쪽으로 스와이프
+                    currentIndex = (currentIndex - 1 + slideCount) % slideCount;
+                }
+                updateSlidePosition();
+                updateActiveDot();
+            }
+        }
+        
+        // oopy 호환성 개선 함수
+        function applyOopyCompatibility() {
             // 여백 강제 제거 확인
             document.body.style.margin = '0';
             document.body.style.padding = '0';
             document.documentElement.style.margin = '0';
             document.documentElement.style.padding = '0';
-        });
+            
+            // oopy에 의해 추가될 수 있는 상위 컨테이너 여백 제거
+            const applyToParents = function(element, levels) {
+                let current = element;
+                for (let i = 0; i < levels && current.parentElement; i++) {
+                    current = current.parentElement;
+                    if (current.style) {
+                        current.style.margin = '0';
+                        current.style.padding = '0';
+                        if (current.tagName && current.tagName.toLowerCase() === 'iframe') {
+                            current.style.border = 'none';
+                            current.style.display = 'block';
+                            current.style.width = '100%';
+                        }
+                    }
+                }
+            };
+            
+            // 슬라이더 컨테이너의 부모 요소들에게 여백 제거 적용
+            const sliderContainer = document.querySelector('.slider-container');
+            if (sliderContainer) {
+                applyToParents(sliderContainer, 8); // 더 많은 상위 요소 처리
+            }
+        }
+        
+        // 부모 컨테이너에 맞게 슬라이더 최적화
+        function optimizeSliderForParent() {
+            const sliderContainer = document.querySelector('.slider-container');
+            const parentWidth = sliderContainer.parentElement.offsetWidth;
+            
+            // 부모 너비에 따라 높이 비율 동적 조정 (선택 사항)
+            // 특별한 비율 조정이 필요한 경우에만 활성화
+            /*
+            if (parentWidth < 400) {
+                // 매우 좁은 화면에서는 높이를 더 높게
+                document.querySelectorAll('.slide-aspect-ratio').forEach(el => {
+                    el.style.paddingBottom = '120%';
+                });
+            }
+            */
+        }
     </script>
 </body>
 </html>
