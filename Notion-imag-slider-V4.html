@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>notion-image-slider</title>
+    <style>
+        /* 모든 요소에 대한 글로벌 리셋 */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            border: 0;
+        }
+        
+        /* 문서 전체 설정 */
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: transparent;
+            position: relative;
+        }
+        
+        /* 슬라이더 컨테이너 */
+        .slider-container {
+            width: 100%;
+            height: 100vh; /* viewport height 100% */
+            position: absolute;
+            top: 0;
+            left: 0;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: transparent;
+            border-radius: 12px; /* 컨테이너에도 동일한 라운드 효과 추가 */
+        }
+        
+        /* 슬라이드 래퍼 */
+        .slides {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+            width: 100%;
+            height: 100%;
+        }
+        
+        /* 개별 슬라이드 */
+        .slide {
+            min-width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: transparent;
+            position: relative;
+        }
+        
+        /* 이미지 설정 */
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            border-radius: 12px; /* 이미지에 12px 라운드 효과 추가 */
+        }
+        
+        /* 도트 컨테이너 */
+        .dots-container {
+            position: absolute;
+            bottom: 15px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            z-index: 10;
+            background-color: transparent;
+            pointer-events: none; /* 인디케이터가 클릭 이벤트를 방해하지 않도록 */
+        }
+        
+        /* 개별 도트 */
+        .dot {
+            cursor: pointer;
+            height: 8px;
+            width: 8px;
+            margin: 0 5px;
+            background-color: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            display: inline-block;
+            transition: background-color 0.3s;
+            pointer-events: auto; /* 도트 자체는 클릭 가능하게 */
+            border: 1px solid rgba(0, 0, 0, 0.2); /* 어두운 배경에서도 보이도록 테두리 추가 */
+        }
+        
+        /* 활성 도트 */
+        .active, .dot:hover {
+            background-color: rgba(255, 255, 255, 1);
+        }
+    </style>
+</head>
+<body>
+    <div class="slider-container">
+        <div class="slides">
+            <div class="slide">
+                <img src="https://he-dable.github.io/notion-image-slider/images/Benefit-img-widget_250321-a.jpg" alt="슬라이드 1">
+            </div>
+            <div class="slide">
+                <img src="https://he-dable.github.io/notion-image-slider/images/Benefit-img-widget_250321-b.jpg" alt="슬라이드 2">
+            </div>
+            <div class="slide">
+                <img src="https://he-dable.github.io/notion-image-slider/images/Benefit-img-widget_250321-c.jpg" alt="슬라이드 3">
+            </div>
+        </div>
+        
+        <div class="dots-container">
+            <span class="dot" onclick="currentSlide(0)"></span>
+            <span class="dot" onclick="currentSlide(1)"></span>
+            <span class="dot" onclick="currentSlide(2)"></span>
+        </div>
+    </div>
+
+    <script>
+        // 노션 임베드 문제를 해결하기 위한 스크립트
+        (function() {
+            // iframe 크기 자동 조정 메시지 전송 함수
+            function sendResizeMessage() {
+                if (window.parent) {
+                    window.parent.postMessage({
+                        width: document.body.scrollWidth,
+                        height: document.body.scrollHeight
+                    }, '*');
+                }
+            }
+            
+            // 페이지 로드 시 및 윈도우 크기 변경 시 메시지 전송
+            window.addEventListener('load', sendResizeMessage);
+            window.addEventListener('resize', sendResizeMessage);
+            
+            // 문서가 표시된 후 추가 메시지 전송 (지연된 리사이징 처리)
+            setTimeout(sendResizeMessage, 500);
+        })();
+
+        // 슬라이더 관련 변수
+        let currentIndex = 0;
+        const slides = document.querySelector('.slides');
+        const slideCount = document.querySelectorAll('.slide').length;
+        const dots = document.querySelectorAll('.dot');
+        
+        // 초기 활성 도트 설정
+        updateActiveDot();
+        
+        // 슬라이드 위치 업데이트 함수
+        function updateSlidePosition() {
+            slides.style.transform = `translateX(-${currentIndex * 100}%)`;
+        }
+        
+        // 활성 도트 업데이트 함수
+        function updateActiveDot() {
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentIndex);
+            });
+        }
+        
+        // 특정 슬라이드로 이동 함수
+        function currentSlide(index) {
+            currentIndex = index;
+            updateSlidePosition();
+            updateActiveDot();
+        }
+        
+        // 자동 슬라이드 기능
+        let interval = setInterval(() => {
+            currentIndex = (currentIndex + 1) % slideCount;
+            updateSlidePosition();
+            updateActiveDot();
+        }, 5000);
+        
+        // 마우스 호버 시 자동 슬라이드 정지
+        document.querySelector('.slider-container').addEventListener('mouseenter', () => {
+            clearInterval(interval);
+        });
+        
+        // 마우스 이탈 시 자동 슬라이드 재개
+        document.querySelector('.slider-container').addEventListener('mouseleave', () => {
+            interval = setInterval(() => {
+                currentIndex = (currentIndex + 1) % slideCount;
+                updateSlidePosition();
+                updateActiveDot();
+            }, 5000);
+        });
+        
+        // 터치 스와이프 지원 (모바일 환경)
+        let touchStartX = 0;
+        let touchEndX = 0;
+        
+        document.querySelector('.slider-container').addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, false);
+        
+        document.querySelector('.slider-container').addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, false);
+        
+        function handleSwipe() {
+            const threshold = 50;  // 최소 스와이프 거리
+            if (touchEndX + threshold < touchStartX) {
+                // 왼쪽으로 스와이프
+                currentIndex = (currentIndex + 1) % slideCount;
+            } else if (touchEndX > touchStartX + threshold) {
+                // 오른쪽으로 스와이프
+                currentIndex = (currentIndex - 1 + slideCount) % slideCount;
+            }
+            updateSlidePosition();
+            updateActiveDot();
+        }
+        
+        // 슬라이더의 비율을 조정하는 함수
+        function maintainAspectRatio() {
+            const container = document.querySelector('.slider-container');
+            // 노션은 주로 iframe을 사용하므로 viewport 높이 대신 상대적 비율 사용
+            container.style.height = '100vh';
+            // 미세 조정을 위해 약간의 지연 추가
+            setTimeout(() => {
+                // 이미지 비율에 맞게 컨테이너 크기 조정 (세로 이미지: 3:4 비율)
+                const width = container.offsetWidth;
+                const height = width * (4/3); // 세로형 이미지 비율
+                container.style.height = height + 'px';
+            }, 0);
+        }
+        
+        // 페이지 로드 및 리사이즈 시 크기 조정
+        window.addEventListener('load', maintainAspectRatio);
+        window.addEventListener('resize', maintainAspectRatio);
+        
+        // 문서 로드 완료 후 추가 초기화
+        document.addEventListener('DOMContentLoaded', () => {
+            // 초기 슬라이드 위치 설정
+            updateSlidePosition();
+            // 비율 조정 재실행 (추가적인 안전장치)
+            setTimeout(maintainAspectRatio, 100);
+        });
+    </script>
+</body>
+</html>
