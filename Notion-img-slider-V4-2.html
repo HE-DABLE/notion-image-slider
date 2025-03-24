@@ -3,150 +3,232 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minimal Notion Slider</title>
+    <title>notion-image-slider</title>
     <style>
-        /* 기본 스타일 리셋 */
-        * {
+        /* 전체 리셋 및 여백 제거 강화 */
+        *, *::before, *::after {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
         
-        /* 문서 전체에 투명 배경 적용 */
         html, body {
-            width: 100%;
-            height: auto;
-            overflow: hidden;
-            background: transparent;
             margin: 0;
             padding: 0;
+            overflow-x: hidden; /* 가로 스크롤 방지 */
         }
         
-        /* 메인 컨테이너 - 이미지만 포함하고 여백 없음 */
-        .image-container {
+        /* 슬라이더 컨테이너 설정 */
+        .slider-container {
             width: 100%;
-            display: block;
+            max-width: 768px;
             position: relative;
-            padding: 0;
-            margin: 0;
-            line-height: 0; /* 중요: 이미지 아래 여백 제거 */
-            font-size: 0; /* 중요: 텍스트 요소가 여백을 만들지 않도록 */
+            margin: 0 auto;
+            overflow: hidden;
+            border-radius: 0;
+            display: block; /* display: block 적용 */
+            line-height: 0; /* 잠재적인 인라인 요소 여백 제거 */
         }
         
-        /* 이미지 자체 스타일 */
-        .current-image {
+        .slides {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
             width: 100%;
-            height: auto;
-            display: block;
-            border-radius: 12px;
-            margin: 0;
-            padding: 0;
+            margin: 0; /* 여백 제거 */
+            padding: 0; /* 여백 제거 */
         }
         
-        /* 하단 컨트롤 */
-        .controls {
-            position: absolute;
-            bottom: 15px;
-            left: 0;
-            right: 0;
+        .slide {
+            min-width: 100%;
             display: flex;
             justify-content: center;
-            background: transparent;
-            line-height: normal;
-            font-size: 16px;
-            z-index: 10;
+            align-items: center;
+            background-color: #f8f8f8;
+            margin: 0; /* 여백 제거 */
+            padding: 0; /* 여백 제거 */
+            line-height: 0; /* 이미지 하단 여백 제거 */
         }
         
-        /* 도트 스타일 */
+        .slide img {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+            display: block; /* 이미지 하단 여백 제거 */
+            margin: 0; /* 여백 제거 */
+        }
+        
+        /* 슬라이드 컨테이너 비율 유지를 위한 패딩 트릭 */
+        .slide-aspect-ratio {
+            width: 100%;
+            padding-bottom: 133.3%; /* 4:3 비율 (768:1024 = 3:4 비율) */
+            position: relative;
+            margin: 0; /* 여백 제거 */
+        }
+        
+        .slide-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0; /* 여백 제거 */
+            padding: 0; /* 여백 제거 */
+        }
+        
+        .dots-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+            margin-bottom: 0; /* 하단 여백 제거 */
+            line-height: normal; /* 도트 컨테이너의 라인 높이 복구 */
+        }
+        
         .dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.7);
-            border: 1px solid rgba(0,0,0,0.2);
-            margin: 0 4px;
             cursor: pointer;
-            padding: 0;
+            height: 10px;
+            width: 10px;
+            margin: 0 5px;
+            background-color: #bbb;
+            border-radius: 50%;
+            display: inline-block;
+            transition: background-color 0.3s;
         }
         
-        .dot.active {
-            background: white;
+        .active, .dot:hover {
+            background-color: #555;
+        }
+        
+        /* 작은 화면에서 도트 크기 조정 */
+        @media (max-width: 480px) {
+            .dot {
+                height: 8px;
+                width: 8px;
+                margin: 0 3px;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- 단순화된 이미지 컨테이너, 여백을 최소화 -->
-    <div class="image-container">
-        <img class="current-image" src="https://he-dable.github.io/notion-image-slider/images/Benefit-img-widget_250321-a.jpg" alt="슬라이드 이미지">
-        
-        <!-- 컨트롤은 이미지 내부에 위치 -->
-        <div class="controls">
-            <div class="dot active" onclick="changeSlide(0)"></div>
-            <div class="dot" onclick="changeSlide(1)"></div>
-            <div class="dot" onclick="changeSlide(2)"></div>
+    <!-- 전체 래퍼 추가 - 여백 제거 강화 -->
+    <div style="margin:0; padding:0; display:block; line-height:0;">
+        <div class="slider-container">
+            <div class="slides">
+                <div class="slide">
+                    <div class="slide-aspect-ratio">
+                        <div class="slide-content">
+                            <img src="https://he-dable.github.io/notion-image-slider/images/Benefit-img-widget_250321-a.jpg" alt="슬라이드 1">
+                        </div>
+                    </div>
+                </div>
+                <div class="slide">
+                    <div class="slide-aspect-ratio">
+                        <div class="slide-content">
+                            <img src="https://he-dable.github.io/notion-image-slider/images/Benefit-img-widget_250321-b.jpg" alt="슬라이드 2">
+                        </div>
+                    </div>
+                </div>
+                <div class="slide">
+                    <div class="slide-aspect-ratio">
+                        <div class="slide-content">
+                            <img src="https://he-dable.github.io/notion-image-slider/images/Benefit-img-widget_250321-c.jpg" alt="슬라이드 3">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="dots-container">
+                <span class="dot" onclick="currentSlide(0)"></span>
+                <span class="dot" onclick="currentSlide(1)"></span>
+                <span class="dot" onclick="currentSlide(2)"></span>
+            </div>
         </div>
     </div>
 
     <script>
-        // 이미지 URL 배열
-        const imageUrls = [
-            "https://he-dable.github.io/notion-image-slider/images/Benefit-img-widget_250321-a.jpg",
-            "https://he-dable.github.io/notion-image-slider/images/Benefit-img-widget_250321-b.jpg",
-            "https://he-dable.github.io/notion-image-slider/images/Benefit-img-widget_250321-c.jpg"
-        ];
-        
-        // 현재 이미지 인덱스
         let currentIndex = 0;
-        
-        // 이미지 요소와 도트 버튼들
-        const imageElement = document.querySelector('.current-image');
+        const slides = document.querySelector('.slides');
+        const slideCount = document.querySelectorAll('.slide').length;
         const dots = document.querySelectorAll('.dot');
         
-        // 슬라이드 변경 함수
-        function changeSlide(index) {
-            // 인덱스 업데이트
-            currentIndex = index;
-            
-            // 이미지 변경
-            imageElement.src = imageUrls[currentIndex];
-            
-            // 도트 상태 업데이트
-            dots.forEach((dot, i) => {
-                dot.classList.toggle('active', i === currentIndex);
+        // 초기 활성 도트 설정
+        updateActiveDot();
+        
+        // 슬라이드 위치 업데이트 함수
+        function updateSlidePosition() {
+            slides.style.transform = `translateX(-${currentIndex * 100}%)`;
+        }
+        
+        // 활성 도트 업데이트 함수
+        function updateActiveDot() {
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentIndex);
             });
         }
         
+        // 특정 슬라이드로 이동 함수
+        function currentSlide(index) {
+            currentIndex = index;
+            updateSlidePosition();
+            updateActiveDot();
+        }
+        
         // 자동 슬라이드 기능
-        let slideInterval = setInterval(() => {
-            currentIndex = (currentIndex + 1) % imageUrls.length;
-            changeSlide(currentIndex);
+        let interval = setInterval(() => {
+            currentIndex = (currentIndex + 1) % slideCount;
+            updateSlidePosition();
+            updateActiveDot();
         }, 5000);
         
-        // 마우스 오버 시 자동 슬라이드 중지
-        document.querySelector('.image-container').addEventListener('mouseenter', () => {
-            clearInterval(slideInterval);
+        // 마우스 호버 시 자동 슬라이드 정지
+        document.querySelector('.slider-container').addEventListener('mouseenter', () => {
+            clearInterval(interval);
         });
         
-        // 마우스 아웃 시 자동 슬라이드 재개
-        document.querySelector('.image-container').addEventListener('mouseleave', () => {
-            slideInterval = setInterval(() => {
-                currentIndex = (currentIndex + 1) % imageUrls.length;
-                changeSlide(currentIndex);
+        // 마우스 이탈 시 자동 슬라이드 재개
+        document.querySelector('.slider-container').addEventListener('mouseleave', () => {
+            interval = setInterval(() => {
+                currentIndex = (currentIndex + 1) % slideCount;
+                updateSlidePosition();
+                updateActiveDot();
             }, 5000);
         });
         
-        // 노션 iframe 크기 최적화를 위한 메시지
+        // 터치 스와이프 지원 (모바일 환경)
+        let touchStartX = 0;
+        let touchEndX = 0;
+        
+        document.querySelector('.slider-container').addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, false);
+        
+        document.querySelector('.slider-container').addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, false);
+        
+        function handleSwipe() {
+            const threshold = 50;  // 최소 스와이프 거리
+            if (touchEndX + threshold < touchStartX) {
+                // 왼쪽으로 스와이프
+                currentIndex = (currentIndex + 1) % slideCount;
+            } else if (touchEndX > touchStartX + threshold) {
+                // 오른쪽으로 스와이프
+                currentIndex = (currentIndex - 1 + slideCount) % slideCount;
+            }
+            updateSlidePosition();
+            updateActiveDot();
+        }
+        
+        // 페이지 로드 완료 후 추가 보정
         window.addEventListener('load', function() {
-            // 이미지 로드 후 실제 높이 계산
-            imageElement.onload = function() {
-                // 부모 프레임에 높이 정보 전달
-                if (window.parent) {
-                    window.parent.postMessage({
-                        height: imageElement.offsetHeight,
-                        type: 'resize-iframe'
-                    }, '*');
-                }
-            };
+            // 여백 강제 제거 확인
+            document.body.style.margin = '0';
+            document.body.style.padding = '0';
+            document.documentElement.style.margin = '0';
+            document.documentElement.style.padding = '0';
         });
     </script>
 </body>
