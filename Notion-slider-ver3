@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>notion-image-slider</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: transparent;
+        }
+        
+        .slider-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            margin: 0;
+            overflow: hidden;
+            border-radius: 0;
+            background-color: transparent;
+        }
+        
+        .slides {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .slide {
+            min-width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: transparent;
+        }
+        
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .dots-container {
+            position: absolute;
+            bottom: 15px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            z-index: 10;
+        }
+        
+        .dot {
+            cursor: pointer;
+            height: 8px;
+            width: 8px;
+            margin: 0 5px;
+            background-color: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            display: inline-block;
+            transition: background-color 0.3s;
+        }
+        
+        .active, .dot:hover {
+            background-color: rgba(255, 255, 255, 1);
+        }
+    </style>
+</head>
+<body>
+    <div class="slider-container">
+        <div class="slides">
+            <div class="slide">
+                <img src="https://he-dable.github.io/notion-image-slider/images/Benefit-img-widget_250321-a.jpg" alt="슬라이드 1">
+            </div>
+            <div class="slide">
+                <img src="https://he-dable.github.io/notion-image-slider/images/Benefit-img-widget_250321-b.jpg" alt="슬라이드 2">
+            </div>
+            <div class="slide">
+                <img src="https://he-dable.github.io/notion-image-slider/images/Benefit-img-widget_250321-c.jpg" alt="슬라이드 3">
+            </div>
+        </div>
+        
+        <div class="dots-container">
+            <span class="dot" onclick="currentSlide(0)"></span>
+            <span class="dot" onclick="currentSlide(1)"></span>
+            <span class="dot" onclick="currentSlide(2)"></span>
+        </div>
+    </div>
+
+    <script>
+        let currentIndex = 0;
+        const slides = document.querySelector('.slides');
+        const slideCount = document.querySelectorAll('.slide').length;
+        const dots = document.querySelectorAll('.dot');
+        
+        // 초기 활성 도트 설정
+        updateActiveDot();
+        
+        // 슬라이드 위치 업데이트 함수
+        function updateSlidePosition() {
+            slides.style.transform = `translateX(-${currentIndex * 100}%)`;
+        }
+        
+        // 활성 도트 업데이트 함수
+        function updateActiveDot() {
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentIndex);
+            });
+        }
+        
+        // 특정 슬라이드로 이동 함수
+        function currentSlide(index) {
+            currentIndex = index;
+            updateSlidePosition();
+            updateActiveDot();
+        }
+        
+        // 자동 슬라이드 기능
+        let interval = setInterval(() => {
+            currentIndex = (currentIndex + 1) % slideCount;
+            updateSlidePosition();
+            updateActiveDot();
+        }, 5000);
+        
+        // 마우스 호버 시 자동 슬라이드 정지
+        document.querySelector('.slider-container').addEventListener('mouseenter', () => {
+            clearInterval(interval);
+        });
+        
+        // 마우스 이탈 시 자동 슬라이드 재개
+        document.querySelector('.slider-container').addEventListener('mouseleave', () => {
+            interval = setInterval(() => {
+                currentIndex = (currentIndex + 1) % slideCount;
+                updateSlidePosition();
+                updateActiveDot();
+            }, 5000);
+        });
+        
+        // 터치 스와이프 지원 (모바일 환경)
+        let touchStartX = 0;
+        let touchEndX = 0;
+        
+        document.querySelector('.slider-container').addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, false);
+        
+        document.querySelector('.slider-container').addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, false);
+        
+        function handleSwipe() {
+            const threshold = 50;  // 최소 스와이프 거리
+            if (touchEndX + threshold < touchStartX) {
+                // 왼쪽으로 스와이프
+                currentIndex = (currentIndex + 1) % slideCount;
+            } else if (touchEndX > touchStartX + threshold) {
+                // 오른쪽으로 스와이프
+                currentIndex = (currentIndex - 1 + slideCount) % slideCount;
+            }
+            updateSlidePosition();
+            updateActiveDot();
+        }
+        
+        // 페이지 크기에 맞게 자동 조정
+        function resizeSlider() {
+            const container = document.querySelector('.slider-container');
+            const width = container.offsetWidth;
+            const height = width * (4/3); // 4:3 비율 유지 (또는 원하는 비율로 변경)
+            container.style.height = height + 'px';
+        }
+        
+        // 페이지 로드 및 리사이즈 시 크기 조정
+        window.addEventListener('load', resizeSlider);
+        window.addEventListener('resize', resizeSlider);
+    </script>
+</body>
+</html>
